@@ -6,7 +6,4 @@ commands:
     stats:
         usage: /<command>
         description: nope
-    refresh:
-        usage: /<command>
-        description: nope
     
