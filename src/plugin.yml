@@ -1,0 +1,12 @@
+name: Mgz-plugin
+version: 1.0
+main: me.robpizza.mgzopdracht.Main
+
+commands:
+    stats:
+        usage: /<command>
+        description: nope
+    refresh:
+        usage: /<command>
+        description: nope
+    
