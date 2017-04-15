@@ -18,6 +18,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		Bukkit.getServer().getPluginManager().registerEvents(new JoinEvent(), this);
 		this.getCommand("stats").setExecutor(new JoinEvent());
+		this.getCommand("refresh").setExecutor(new JoinEvent());
 	}
 
 	@Override
