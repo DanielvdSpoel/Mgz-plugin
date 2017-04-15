@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -19,13 +20,14 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import me.robpizza.mgzopdracht.SQLStats;
 
 public class JoinEvent implements Listener, CommandExecutor {
+	Plugin pl;
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		SQLStats.createPlayer(p.getName());
 		setScoreboard(p);
-		
-		
+
+
 	}
 
 	@EventHandler
@@ -38,31 +40,30 @@ public class JoinEvent implements Listener, CommandExecutor {
 			SQLStats.addDeaths(p.getName(), 1);
 		}
 	}
-	
-	
+
+
 	public void setScoreboard(Player p) {
-		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		Scoreboard board = manager.getNewScoreboard();
-		Objective o = board.registerNewObjective("Stats", "dummy");
-		
-		o.setDisplaySlot(DisplaySlot.SIDEBAR);
-		o.setDisplayName("Stats");
-		
-		Score kills = o.getScore(ChatColor.GREEN + "Kills: ");
-		Score deaths = o.getScore(ChatColor.GREEN + "Deaths: ");
-		
-		kills.setScore(SQLStats.getKills(p.getName()));
-		deaths.setScore(SQLStats.getDeaths(p.getName()));
-		
-		p.setScoreboard(board);
+				final ScoreboardManager manager = Bukkit.getScoreboardManager();
+				final Scoreboard board = manager.getNewScoreboard();
+				Objective o = board.registerNewObjective("Stats", "dummy");
+
+				o.setDisplaySlot(DisplaySlot.SIDEBAR);
+				o.setDisplayName("Stats");
+
+				Score kills = o.getScore(ChatColor.GREEN + "Kills: ");
+				Score deaths = o.getScore(ChatColor.GREEN + "Deaths: ");
+
+				kills.setScore(SQLStats.getKills(p.getName()));
+				deaths.setScore(SQLStats.getDeaths(p.getName()));
+
+				p.setScoreboard(board);
 	}
-	
+
 	public void removeScoreboard(Player p) {
-		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		Scoreboard board = manager.getMainScoreboard();
-		board.resetScores(p.getName());
+		p.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
+		p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 	}
-	
+
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 
 		if(!(sender instanceof Player)) {
@@ -80,6 +81,13 @@ public class JoinEvent implements Listener, CommandExecutor {
 					p.sendMessage("[]================[]");
 					return true;
 				}
+			}
+			
+			if(cmd.getName().equalsIgnoreCase("refresh")) {
+				removeScoreboard(p);
+				setScoreboard(p);
+				p.sendMessage("scoreboard is refreshed");
+				return true;
 			}
 		}
 		return false;
